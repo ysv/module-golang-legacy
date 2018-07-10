@@ -8,11 +8,9 @@ func Join(a []string, sep string) string {
 		return a[0]
 	case 2:
 		// Special case for common small values.
-		// Remove if golang.org/issue/6714 is fixed
 		return a[0] + sep + a[1]
 	case 3:
 		// Special case for common small values.
-		// Remove if golang.org/issue/6714 is fixed
 		return a[0] + sep + a[1] + sep + a[2]
 	}
 	n := len(sep) * (len(a) - 1)

@@ -10,8 +10,12 @@ func New() *Stack {
 }
 
 func (s *Stack) Push(v int) {
+	if s.sp >= cap(s.stack)-1 {
+		s.stack = append(s.stack, v)
+	} else {
+		s.stack[s.sp] = v
+	}
 	s.sp += 1
-	s.stack = append(s.stack, v)
 }
 
 func (s *Stack) Pop() int {

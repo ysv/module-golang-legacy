@@ -1,5 +1,7 @@
 package cipher
 
+//import "fmt"
+
 type Cipher interface {
 	Encode(string) string
 	Decode(string) string
@@ -30,9 +32,17 @@ func (c MyCaesar) Encode(s string) string {
 	str := make([]byte, len(s))
 	for i := 0; i < len(s); i++ {
 		if s[i] > 64 && s[i] < 91 {
-			str[i] = s[i] + 32 + 3
+			tmp := s[i] + 32 + 3
+			if tmp > 122 {
+				tmp = tmp - 122 + 96
+			}
+			str[i] = tmp
 		} else if s[i] > 96 && s[i] < 123 {
-			str[i] = s[i] + 3
+			tmp := s[i] + 3
+			if tmp > 122 {
+				tmp = tmp - 122 + 96
+			}
+			str[i] = tmp
 		} else {
 			continue
 		}
@@ -44,7 +54,11 @@ func (c MyCaesar) Decode(s string) string {
 	str := make([]byte, len(s))
 	for i := 0; i < len(s); i++ {
 		if s[i] != 0 {
-			str[i] = s[i] - 3
+			tmp := s[i] - 3
+			if tmp < 97 {
+				tmp = 123 - (97 - tmp)
+			}
+			str[i] = tmp
 		}
 	}
 	return string(str)
@@ -54,9 +68,17 @@ func (shift MyShift) Encode(s string) string {
 	str := make([]byte, len(s))
 	for i := 0; i < len(s); i++ {
 		if s[i] > 64 && s[i] < 91 {
-			str[i] = s[i] + 32 + byte(shift.shift)
+			tmp := s[i] + 32 + byte(shift.shift)
+			if tmp > 122 {
+				tmp = tmp - 122 + 96
+			}
+			str[i] = tmp
 		} else if s[i] > 96 && s[i] < 123 {
-			str[i] = s[i] + byte(shift.shift)
+			tmp := s[i] + byte(shift.shift)
+			if tmp > 122 {
+				tmp = tmp - 122 + 96
+			}
+			str[i] = tmp
 		} else {
 			continue
 		}
@@ -68,7 +90,11 @@ func (shift MyShift) Decode(s string) string {
 	str := make([]byte, len(s))
 	for i := 0; i < len(s); i++ {
 		if s[i] != 0 {
-			str[i] = s[i] - byte(shift.shift)
+			tmp := s[i] - byte(shift.shift)
+			if tmp < 97 {
+				tmp = 123 - (97 - tmp)
+			}
+			str[i] = tmp
 		}
 	}
 	return string(str)
@@ -159,10 +185,9 @@ func invalid_key(s string) bool {
 }
 
 /*func main() {
-	s := "Go, go, gophers"
+	s := "todayisholiday"
 	var c Cipher = NewCaesar()
-	shift := NewShift(3)
-	fmt.Println(MyShift{shift})
+	//	shift := NewShift(3)
 	fmt.Println(c.Encode(s))
 	fmt.Println(c.Decode(c.Encode(s)))
 }*/

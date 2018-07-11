@@ -6,73 +6,25 @@ type Cipher interface {
 }
 
 //////////////CAESAR
-type Caesar struct{}
-
-func (c Caesar) Encode(s string) string {
-	s, _ = CipherDowncase(s)
-	r := []rune{}
-
-	for _, v := range s {
-		v = (v-'a'+3)%26 + 'a'
-		r = append(r, v)
-	}
-
-	return string(r)
-}
-
-func (c Caesar) Decode(s string) string {
-	s, _ = CipherDowncase(s)
-	r := []rune{}
-
-	for _, v := range s {
-		v = (v-'a'+23)%26 + 'a'
-		r = append(r, v)
-	}
-
-	return string(r)
-}
-
 func NewCaesar() Cipher {
-	return Caesar{}
+	return NewShift(3)
 }
 
-///////////SHIFT
-type Shift struct {
-	shift int
-}
-
-func (sh Shift) Encode(s string) string {
-	s, _ = CipherDowncase(s)
-	r := []rune{}
-
-	for _, v := range s {
-		v = (v-'a'+(26+rune(sh.shift))%26)%26 + 'a'
-		r = append(r, v)
-	}
-
-	return string(r)
-}
-
-func (sh Shift) Decode(s string) string {
-	s, _ = CipherDowncase(s)
-	r := []rune{}
-
-	for _, v := range s {
-		v = (v-'a'+(26-rune(sh.shift))%26)%26 + 'a'
-		r = append(r, v)
-	}
-
-	return string(r)
-}
-
-func NewShift(shift int) Cipher {
-	if shift >= 26 || shift <= -26 || shift == 0 {
+//////////////SHIFT
+func NewShift(sh int) Cipher {
+	switch {
+	case sh == 0:
 		return nil
+	case sh > 25:
+		return nil
+	case sh < -25:
+		return nil
+	default:
+		return NewVigenere(string('a' + (26+rune(sh))%26))
 	}
-	return Shift{shift}
 }
 
-////////////VIGENERE
+//////////////VIGENERE
 type Vigenere struct {
 	key string
 }
@@ -105,6 +57,13 @@ func (vi Vigenere) Decode(s string) string {
 	}
 
 	return string(r)
+}
+
+func NewVigenere(key string) Cipher {
+	if key_not_valid(key) {
+		return nil
+	}
+	return Vigenere{key}
 }
 
 ////////////////Other tools
@@ -143,11 +102,4 @@ func key_not_valid(key string) bool {
 	}
 
 	return false
-}
-
-func NewVigenere(key string) Cipher {
-	if key_not_valid(key) {
-		return nil
-	}
-	return Vigenere{key}
 }

@@ -13,21 +13,21 @@ func Frequency(text string) map[rune]int {
 }
 
 type SafeMap struct {
-	fmap  map[rune]int
-	mutex *sync.Mutex
+	buf map[rune]int
+	*sync.Mutex
 }
 
 func concFrequency(text string, fmap *SafeMap, done chan byte) {
 	for _, v := range text {
-		fmap.mutex.Lock()
-		fmap.fmap[v] += 1
-		fmap.mutex.Unlock()
+		fmap.Lock()
+		fmap.buf[v] += 1
+		fmap.Unlock()
 	}
 	done <- 1
 }
 
 func ConcurrentFrequency(texts []string) map[rune]int {
-	fmap := &SafeMap{fmap: map[rune]int{}, mutex: &sync.Mutex{}}
+	fmap := &SafeMap{map[rune]int{}, &sync.Mutex{}}
 	len := len(texts)
 	done := make(chan byte, len)
 
@@ -39,5 +39,5 @@ func ConcurrentFrequency(texts []string) map[rune]int {
 		<-done
 	}
 
-	return fmap.fmap
+	return fmap.buf
 }

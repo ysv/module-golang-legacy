@@ -34,6 +34,4 @@ func Bracket(s string) (bool, error) {
 	return true, nil
 }
 
-//func main() {
-//fmt.Println(Brackets("{[]([()])}"))
-//}
+
